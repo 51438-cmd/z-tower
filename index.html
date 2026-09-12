@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapunzel : The Z Tower | z-tower</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+
+*{box-sizing:border-box}
+:root{
+  --gold:#ffd66b; --gold2:#f4ad35; --purple:#24143e; --deep:#0c0718;
+  --pink:#ff8fc7; --red:#ef5365; --green:#67d69a; --glass:rgba(255,255,255,.10);
+}
+body{
+  margin:0; min-height:100vh; font-family:Kanit,sans-serif; color:#fff;
+  background:radial-gradient(circle at 50% 15%,#503273 0,#1d1235 34%,#080512 80%);
+  overflow-x:hidden;
+}
+body.night{background:radial-gradient(circle at 50% 10%,#172449 0,#090d1e 40%,#02030a 85%)}
+button{font-family:inherit;cursor:pointer}
+.hidden{display:none!important}
+.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 18px;position:relative;overflow:hidden}
+.stars,.stars:before,.stars:after{content:"";position:absolute;inset:0;pointer-events:none}
+.stars{background-image:radial-gradient(#fff 1px,transparent 1px);background-size:70px 70px;opacity:.18}
+.stars:before{background-image:radial-gradient(#fff 1px,transparent 1px);background-size:113px 113px;opacity:.25;transform:translate(25px,15px)}
+.moon{position:absolute;right:8%;top:8%;width:80px;height:80px;border-radius:50%;background:#fff1bf;box-shadow:0 0 45px #ffe8a0;opacity:.85}
+.castle{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);font-size:clamp(100px,20vw,220px);filter:drop-shadow(0 15px 20px #0008);opacity:.5}
+.title{z-index:2;text-align:center;max-width:900px}
+.badge{display:inline-block;padding:6px 16px;border:1px solid #ffd66b88;border-radius:999px;color:var(--gold);background:#0003;letter-spacing:2px}
+h1{font-family:"Playfair Display",serif;font-size:clamp(42px,8vw,82px);line-height:1;margin:18px 0 10px;text-shadow:0 5px 25px #000}
+.subtitle{font-size:clamp(18px,3vw,26px);color:#f8dfff}
+.hero-characters{font-size:clamp(45px,9vw,88px);margin:24px 0 10px;letter-spacing:8px}
+.primary{
+  border:0;border-radius:16px;padding:14px 34px;font-size:20px;font-weight:600;
+  color:#3b2105;background:linear-gradient(135deg,#ffe797,#f5b33f);
+  box-shadow:0 8px 25px #0007, inset 0 1px #fff9; transition:.2s;
+}
+.primary:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.credit{position:absolute;bottom:14px;text-align:center;font-size:12px;color:#d8cfe8;opacity:.85;max-width:800px}
+
+#game{justify-content:flex-start;padding-top:18px}
+.topbar{width:min(1050px,100%);display:flex;gap:12px;align-items:center;justify-content:space-between;z-index:5}
+.logo{font-family:"Playfair Display",serif;color:var(--gold);font-size:22px}
+.status{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill{padding:7px 13px;border-radius:999px;background:#0006;border:1px solid #ffffff18}
+.hearts{letter-spacing:3px;font-size:20px}
+.game-layout{width:min(1050px,100%);display:grid;grid-template-columns:250px 1fr;gap:22px;margin-top:18px;z-index:2}
+.tower-panel,.question-card{
+  background:linear-gradient(145deg,#ffffff12,#ffffff06);border:1px solid #ffffff18;
+  border-radius:24px;box-shadow:0 18px 55px #0007;backdrop-filter:blur(12px);
+}
+.tower-panel{padding:15px;display:flex;flex-direction:column}
+.tower{display:flex;flex-direction:column-reverse;gap:5px;height:520px;justify-content:flex-start}
+.floor{height:38px;border-radius:8px;background:#ffffff0b;border:1px solid #ffffff0d;display:flex;align-items:center;justify-content:center;font-size:13px;color:#aaa}
+.floor.current{background:linear-gradient(90deg,#d28aff55,#ffd66b55);border-color:#ffd66b;box-shadow:0 0 18px #ffd66b33;color:#fff}
+.floor.done{background:#62d99b33;color:#aaffca}
+.hero-climber{font-size:34px;text-align:center;margin-top:5px;transition:.5s}
+.question-card{padding:clamp(20px,4vw,38px);position:relative}
+.difficulty{color:var(--gold);font-size:14px}
+.question{font-size:clamp(22px,3.2vw,31px);line-height:1.5;margin:10px 0 25px}
+.formula{display:inline-block;padding:8px 15px;background:#0005;border-radius:10px;font-family:serif;font-style:italic;color:#ffe7a1;margin:5px 0 15px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.answer{
+  text-align:left;border:1px solid #ffffff20;background:#ffffff0b;color:#fff;padding:16px 18px;
+  border-radius:15px;font-size:18px;transition:.18s;
+}
+.answer:hover{background:#ffffff18;transform:translateY(-2px);border-color:#ffd66b77}
+.answer.correct{background:#2b9c6338;border-color:#67d69a;color:#baffd5}
+.answer.wrong{background:#c53b4c3d;border-color:#ff6e7e}
+.feedback{text-align:center;min-height:42px;margin-top:18px;font-size:20px}
+.next{display:block;margin:0 auto}
+.reference{margin-top:18px;color:#cfc5dd;font-size:13px;text-align:center}
+
+.overlay{
+  position:fixed;inset:0;background:#03020abf;backdrop-filter:blur(5px);z-index:20;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.modal{width:min(620px,100%);text-align:center;padding:35px 25px;border-radius:26px;background:linear-gradient(145deg,#291638,#0c0918);border:1px solid #ffffff1c;box-shadow:0 25px 90px #000}
+.modal .big{font-size:80px}
+.modal h2{font-family:"Playfair Display",serif;font-size:36px;margin:8px 0;color:#ffb5d9}
+.modal p{color:#ddd;font-size:18px;line-height:1.7}
+
+@keyframes climb{0%{transform:translateY(30px)}100%{transform:translateY(-18px)}}
+.climbing{animation:climb .8s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:shake .45s}
+@keyframes glow{50%{filter:brightness(1.5)}}
+.successGlow{animation:glow 1s infinite}
+
+footer.gamecredit{width:min(1050px,100%);text-align:center;color:#a99db9;font-size:11px;margin:15px 0 0;z-index:2}
+
+@media(max-width:760px){
+  .game-layout{grid-template-columns:1fr}
+  .tower-panel{order:2}
+  .tower{height:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+  .floor{height:31px;font-size:11px}
+  .hero-climber{display:none}
+  .answers{grid-template-columns:1fr}
+  .topbar{align-items:flex-start}
+  .status{font-size:12px}
+}
+</style>
+</head>
+<body>
+<section id="start" class="screen">
+  <div class="stars"></div><div class="moon"></div>
+  <div class="castle">🏰</div>
+  <div class="title">
+    <span class="badge">z-tower • MATH ADVENTURE</span>
+    <div class="hero-characters">🤴 🧚‍♀️ 👸 🧙‍♀️</div>
+    <h1>Rapunzel : The Z Tower</h1>
+    <div class="subtitle">🏰 เจ้าชายกับเส้นโค้งแห่งความน่าจะเป็น</div>
+    <p>“ช่วยเจ้าหญิงด้วยความรู้คณิตศาสตร์ของเจ้า!”</p>
+    <button class="primary" onclick="startGame()">เริ่มภารกิจ ⚔️</button>
+  </div>
+  <div class="credit">จัดทำโดย นายอนาวินท์ ดาราศรี ม.6/2 เลขที่ 31 • นางสาวนิชาภัทร หนูพรหม ม.6/2 เลขที่ 32 • นางสาวกฤตภรณ์ ศิริกุลผดุงศักดิ์ ม.6/2 เลขที่ 33</div>
+</section>
+
+<section id="game" class="screen hidden">
+  <div class="stars"></div>
+  <div class="topbar">
+    <div class="logo">🏰 Z TOWER</div>
+    <div class="status">
+      <div class="pill" id="level">🏰 ชั้น 1 / 12</div>
+      <div class="pill hearts" id="hearts">❤️❤️❤️</div>
+      <button class="pill" style="color:#fff;border:1px solid #ffffff22;background:#0005" onclick="toggleSound()">🔊</button>
+    </div>
+  </div>
+
+  <div class="game-layout">
+    <aside class="tower-panel">
+      <div style="text-align:center;color:#ffd66b;margin-bottom:8px">หอคอย 12 ชั้น</div>
+      <div class="tower" id="tower"></div>
+      <div class="hero-climber" id="climber">🤴</div>
+    </aside>
+
+    <main class="question-card" id="card">
+      <div class="difficulty" id="difficulty"></div>
+      <div class="question" id="question"></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+      <button id="nextBtn" class="primary next hidden" onclick="nextQuestion()">ขึ้นชั้นต่อไป 🧗</button>
+      <div class="reference">📊 ตารางพื้นที่ใต้เส้นโค้งปกติมาตรฐาน • ตอบให้ถูกเพื่อปีนขึ้นไป</div>
+    </main>
+  </div>
+  <footer class="gamecredit">จัดทำโดย นายอนาวินท์ ดาราศรี ม.6/2 เลขที่ 31 • นางสาวนิชาภัทร หนูพรหม ม.6/2 เลขที่ 32 • นางสาวกฤตภรณ์ ศิริกุลผดุงศักดิ์ ม.6/2 เลขที่ 33</footer>
+</section>
+
+<div id="wrongModal" class="overlay hidden">
+  <div class="modal">
+    <div class="big">🧙‍♀️</div>
+    <h2>ฮ่า ๆ! เจ้าตอบผิดแล้ว!</h2>
+    <p>แม่มดส่งเจ้าชายลงไปยังคุกใต้หอคอย<br>แต่นางฟ้ายังช่วยชีวิตเจ้าได้อีก <b id="remaining"></b> ครั้ง ✨</p>
+    <button class="primary" onclick="closeWrong()">กลับไปแก้ตัว</button>
+  </div>
+</div>
+
+<div id="gameOver" class="overlay hidden">
+  <div class="modal">
+    <div class="big">💀</div>
+    <h2>เจ้าชายถูกขังตลอดกาล!</h2>
+    <p>ความรู้คือกุญแจที่จะช่วยเจ้าได้<br>ต้องเริ่มภารกิจใหม่ตั้งแต่ชั้นแรก</p>
+    <button class="primary" onclick="restart()">เริ่มภารกิจใหม่ 🔄</button>
+  </div>
+</div>
+
+<div id="win" class="overlay hidden">
+  <div class="modal">
+    <div class="big successGlow">👑</div>
+    <h2 style="color:#ffe28a">✨ ภารกิจสำเร็จ! ✨</h2>
+    <p>ผมเจ้าหญิงทอดลงมาจากยอดหอคอย<br>เจ้าชายปีนขึ้นไปและเปิดประตูหอคอยได้สำเร็จ!<br><br>
+    เจ้าชายสามารถใช้ความรู้เรื่องการแจกแจงปกติมาช่วยเจ้าหญิงได้สำเร็จ!</p>
+    <div style="font-size:26px;color:#ffd66b;margin:10px">คะแนน: 12 / 12</div>
+    <button class="primary" onclick="restart()">เล่นอีกครั้ง 👑</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+ {q:"ถ้าตัวแปรสุ่ม Z มีการแจกแจงปกติมาตรฐาน ค่าเฉลี่ยของ Z เท่ากับเท่าใด?",a:["-1","0","1","2"],c:1,d:"⭐ เริ่มต้น"},
+ {q:"การแจกแจงปกติมาตรฐานมีส่วนเบี่ยงเบนมาตรฐานเท่าใด?",a:["0","0.5","1","2"],c:2,d:"⭐ เริ่มต้น"},
+ {q:"ถ้า X มีค่าเฉลี่ย 50 และส่วนเบี่ยงเบนมาตรฐาน 10 ค่า Z ของ X = 70 เท่ากับเท่าใด?",a:["1","2","3","4"],c:1,d:"🌙 ง่าย"},
+ {q:"ถ้า X = 40, μ = 50, σ = 5 ค่า Z เท่ากับเท่าใด?",a:["-2","-1","1","2"],c:0,d:"🌙 ง่าย"},
+ {q:"ถ้า Z = 1.00 จากตารางพื้นที่ใต้เส้นโค้งปกติมาตรฐาน พื้นที่ระหว่างค่าเฉลี่ยกับ Z = 1.00 มีค่าประมาณเท่าใด?",a:["0.1587","0.3413","0.5000","0.8413"],c:1,d:"🌟 ปานกลาง"},
+ {q:"จากตาราง Z พื้นที่ทางซ้ายของ Z = 1.00 มีค่าประมาณเท่าใด?",a:["0.1587","0.3413","0.5000","0.8413"],c:3,d:"🌟 ปานกลาง"},
+ {q:"จากตาราง Z พื้นที่ทางซ้ายของ Z = -1.00 มีค่าประมาณเท่าใด?",a:["0.1587","0.3413","0.5000","0.8413"],c:0,d:"🌟 ปานกลาง"},
+ {q:"ถ้าต้องการหาพื้นที่ทางขวาของ Z = 1.00 ควรคำนวณอย่างไร?",a:["0.8413 + 1","1 - 0.8413","0.8413 - 0.5","0.5 - 0.8413"],c:1,d:"🔥 ยาก"},
+ {q:"ถ้า Z = 0 พื้นที่ทางซ้ายของ Z มีค่าเท่าใด?",a:["0","0.1587","0.5","1"],c:2,d:"🔥 ยาก"},
+ {q:"ถ้า Z = 1.50 จากตาราง Z พื้นที่ทางซ้ายมีค่าประมาณเท่าใด?",a:["0.0668","0.4332","0.9332","0.9668"],c:2,d:"🔥 ยาก"},
+ {q:"ถ้า Z = -1.50 พื้นที่ทางซ้ายมีค่าประมาณเท่าใด?",a:["0.0668","0.1587","0.9332","0.9668"],c:0,d:"⚡ ยากมาก"},
+ {q:"นักเรียนกลุ่มหนึ่งมีคะแนนแจกแจงปกติ โดยมีค่าเฉลี่ย 60 และส่วนเบี่ยงเบนมาตรฐาน 5 ถ้านักเรียนคนหนึ่งได้คะแนน 70 ค่า Z เท่ากับเท่าใด?",a:["1","1.5","2","2.5"],c:2,d:"👑 บอสสุดท้าย"}
+];
+
+let idx=0, lives=3, sound=true, answered=false;
+const $=id=>document.getElementById(id);
+
+function startGame(){
+  idx=0;lives=3;answered=false;
+  $("start").classList.add("hidden"); $("game").classList.remove("hidden");
+  document.body.classList.remove("night"); buildTower(); render(); beep(440,.12);
+}
+function buildTower(){
+  $("tower").innerHTML="";
+  for(let i=12;i>=1;i--){
+    const f=document.createElement("div"); f.className="floor";f.id="floor"+i;f.textContent="ชั้น "+i;
+    $("tower").appendChild(f);
+  }
+}
+function render(){
+  answered=false;
+  $("level").textContent=`🏰 ชั้น ${idx+1} / 12`;
+  $("hearts").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);
+  $("difficulty").textContent=questions[idx].d;
+  $("question").innerHTML=questions[idx].q + (idx===2?'<div class="formula">Z = (X − μ) / σ</div>':idx===3?'<div class="formula">Z = (X − μ) / σ</div>':idx===11?'<div class="formula">Z = (70 − 60) / 5</div>':"");
+  $("answers").innerHTML="";
+  $("feedback").textContent="";
+  $("nextBtn").classList.add("hidden");
+  questions[idx].a.forEach((text,i)=>{
+    const b=document.createElement("button"); b.className="answer";b.innerHTML=`<b>${String.fromCharCode(65+i)})</b> ${text}`;
+    b.onclick=()=>answer(i,b);$("answers").appendChild(b);
+  });
+  document.querySelectorAll(".floor").forEach(f=>f.classList.remove("current","done"));
+  for(let n=1;n<=idx;n++) $("floor"+n)?.classList.add("done");
+  $("floor"+(idx+1))?.classList.add("current");
+}
+function answer(choice,btn){
+  if(answered)return;
+  const q=questions[idx], buttons=[...document.querySelectorAll(".answer")];
+  if(choice===q.c){
+    answered=true;btn.classList.add("correct");buttons.forEach(b=>b.disabled=true);
+    $("feedback").innerHTML="✅ ถูกต้อง! นางฟ้าช่วยส่งเจ้าชายขึ้นไปอีก 1 ชั้น ✨";
+    $("nextBtn").classList.remove("hidden");$("climber").classList.add("climbing");
+    $("floor"+(idx+1))?.classList.add("done");beep(720,.15);setTimeout(()=>beep(920,.1),100);
+  }else{
+    btn.classList.add("wrong");lives--; $("hearts").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);
+    $("card").classList.add("shake");setTimeout(()=>$("card").classList.remove("shake"),500);
+    document.body.classList.add("night");beep(130,.35);
+    if(lives<=0){setTimeout(()=>$("gameOver").classList.remove("hidden"),450);}
+    else{ $("remaining").textContent="❤️".repeat(lives); setTimeout(()=>$("wrongModal").classList.remove("hidden"),350);}
+  }
+}
+function closeWrong(){
+  $("wrongModal").classList.add("hidden");document.body.classList.remove("night");
+  $("answers").querySelectorAll("button").forEach(b=>{b.classList.remove("wrong");b.disabled=false});
+}
+function nextQuestion(){
+  if(idx===11){$("win").classList.remove("hidden");beep(880,.15);setTimeout(()=>beep(1100,.25),160);return}
+  idx++;$("climber").classList.remove("climbing");render();window.scrollTo({top:0,behavior:"smooth"});beep(600,.1);
+}
+function restart(){
+  ["gameOver","win","wrongModal"].forEach(x=>$(x).classList.add("hidden"));
+  document.body.classList.remove("night");startGame();
+}
+function toggleSound(){
+  sound=!sound;$("game").querySelector('button[onclick="toggleSound()"]').textContent=sound?"🔊":"🔇";
+}
+function beep(freq,dur){
+  if(!sound)return;
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;const ac=new C(),o=ac.createOscillator(),g=ac.createGain();
+    o.frequency.value=freq;o.type="sine";g.gain.setValueAtTime(.045,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);
+    o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+dur);
+  }catch(e){}
+}
+</script>
+</body>
+</html>
